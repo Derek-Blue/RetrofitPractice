@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 viewPager.setAdapter(viewpagerAdapter);
 
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(MainActivity.this, R.layout.support_simple_spinner_dropdown_item, spnList);
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(MainActivity.this,R.layout.spinner_item, spnList);
                 spinner.setAdapter(arrayAdapter);
 
             }
@@ -82,6 +82,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<Post>> call, Throwable t) {
                 Log.v("V100=",""+t.getMessage());
+            }
+        });
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                spinner.setSelection(position);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
 
@@ -96,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
     }
 }
 
