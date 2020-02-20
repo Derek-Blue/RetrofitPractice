@@ -15,17 +15,18 @@
             android:layout_height="wrap_content"
             android:id="@+id/constrain">
 
+            <pl.droidsonroids.gif.GifImageView
+                android:indeterminateTint="#000"
+                android:layout_width="60dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="true"
+                android:src="@mipmap/progress4"/>
+
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:id="@+id/item_image" />
-
-            <ProgressBar
-                android:indeterminateTint="#000"
-                android:id="@+id/progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"/>
+                android:layout_height="250dp"
+                android:id="@+id/item_image"
+                android:scaleType="centerInside"/>
 
         </RelativeLayout>
 

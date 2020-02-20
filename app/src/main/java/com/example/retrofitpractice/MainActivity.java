@@ -32,14 +32,14 @@ public class MainActivity extends AppCompatActivity {
     APIservice apIservice;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         spinner = findViewById(R.id.spinner);
         viewPager = findViewById(R.id.viewpager);
 
-        viewpagerAdapter = new ViewpagerAdapter(getSupportFragmentManager(),0);
+        viewpagerAdapter = new ViewpagerAdapter(getSupportFragmentManager(), 0);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://data.boch.gov.tw/")
@@ -47,12 +47,16 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         apIservice = retrofit.create(APIservice.class);
+        final PrDialog prDialog = new PrDialog(MainActivity.this, R.style.PrDialog);
+        prDialog.show();
         Call<List<Post>> call = apIservice.getPosts();
         call.enqueue(new Callback<List<Post>>() {
             @Override
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
-                if (!response.isSuccessful()){
-                    Log.v("V30=","Code = "+ response.code());
+
+                if (!response.isSuccessful()) {
+                    Log.v("V30=", "Code = " + response.code());
+                    prDialog.dismiss();
                     return;
                 }
 
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
                 ArrayList<String> spnList = new ArrayList<>();
 
-                for (Post post : posts ){
+                for (Post post : posts) {
                     ItemFragment itemFragment = new ItemFragment();
                     itemFragment.setImage_result(post.getRepresentImage());
                     itemFragment.setName_result(post.getCaseName());
@@ -74,48 +78,58 @@ public class MainActivity extends AppCompatActivity {
                 }
                 viewPager.setAdapter(viewpagerAdapter);
 
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(MainActivity.this,R.layout.spinner_item, spnList);
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(MainActivity.this, R.layout.spinner_item, spnList);
                 spinner.setAdapter(arrayAdapter);
 
+                prDialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<List<Post>> call, Throwable t) {
-                Log.v("V100=",""+t.getMessage());
+                Log.v("V100=", "" + t.getMessage());
             }
         });
 
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                spinner.setSelection(position);
-            }
+        spinner.setOnItemSelectedListener(selectedListener);
 
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                viewPager.setCurrentItem(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
+        viewPager.addOnPageChangeListener(changeListener);
     }
+
+    private Spinner.OnItemSelectedListener selectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            Log.d("V100=", "" +id);
+            viewPager.setCurrentItem(spinner.getSelectedItemPosition());
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
+    private ViewPager.OnPageChangeListener changeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            spinner.setSelection(viewPager.getCurrentItem());
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
 }
+
+
 
 class ViewpagerAdapter extends FragmentPagerAdapter{
 
